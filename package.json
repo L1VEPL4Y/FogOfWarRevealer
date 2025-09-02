@@ -37,6 +37,8 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^0.542.0"
+		"@lucide/svelte": "^0.542.0",
+		"@types/openseadragon": "^4.1.0",
+		"openseadragon": "^5.0.1"
 	}
 }

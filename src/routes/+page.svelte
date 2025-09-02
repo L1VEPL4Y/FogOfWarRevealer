@@ -11,18 +11,21 @@
   import IconBolt from '@lucide/svelte/icons/bolt';
   import IconImage from '@lucide/svelte/icons/image';
 	import { read } from '$app/server';
-	
+	import { onMount } from 'svelte';
+  import OpenSeadragonViewer from './OpenSeadragonViewer.svelte';
   // State
   let value = $state('files');
   let loadedMapSrc = $state("");
   let loadedMaskSrc = $state("");
   // Logic
+  //Handlers for the click event of the buttons to open a Map & Mask
   function openMapFilePicker(){
     document.getElementById("mapFileInput")?.click();
   }
   function openMaskFilePicker(){
     document.getElementById("maskFileInput")?.click();
   }
+  //Load file for a Map or Mask. Display it in the openSeadragon Viewer when loaded
   function loadFile(isMap:boolean, event:Event){
     if(event.target instanceof HTMLInputElement){
       if(event.target.files && event.target.files[0]){
@@ -40,6 +43,7 @@
       }
     }
   }
+  
 </script>
 
 
@@ -68,11 +72,7 @@
     <input type="file" id="mapFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(true, event)}>
     <input type="file" id="maskFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(false, event)}>
 		<div class="flex items-start justify-center">
-      <!-- ToDo: Display image in Canvas for future zoom and pan functionality -->
-      <!-- ToDo: Show image with hidden Areas Masked Out using a Mask -->
-			<div class="w-full">
-        <img alt="your map goes here when it is loaded" src={loadedMapSrc} />
-      </div>
+      <OpenSeadragonViewer styleClasses="w-full h-300" currentMapSrc={loadedMapSrc}/>
 		</div>
 </div>
 
