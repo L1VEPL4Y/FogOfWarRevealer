@@ -36,14 +36,39 @@
           if(loadEvent.target.result == null) return;
           if(isMap) {
             loadedMapSrc = loadEvent.target.result as string;
+            var memoryImg = new Image();
+            memoryImg.onload = () => {
+              var width = memoryImg.width;
+              var height = memoryImg.height;
+              loadedMaskSrc = createBlackPng(width, height);
+            }
+            memoryImg.src = loadedMapSrc;
           } else {
             loadedMaskSrc = loadEvent.target.result as string;
+            console.log("loaded new mask:");
+            console.log(loadedMaskSrc);
           }
         }
       }
     }
   }
-  
+  //Create Full Black Mask (nothing revealed for players)
+  function createBlackPng(width:number, height:number) {
+    // Create an in-memory canvas
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext("2d");
+
+    // Fill the entire canvas black
+    if(ctx){
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, width, height);
+    }
+    // Export as a PNG data URL
+    return canvas.toDataURL("image/png");
+  }
 </script>
 
 
@@ -72,7 +97,7 @@
     <input type="file" id="mapFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(true, event)}>
     <input type="file" id="maskFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(false, event)}>
 		<div class="flex items-start justify-center">
-      <OpenSeadragonViewer styleClasses="w-full h-300" currentMapSrc={loadedMapSrc}/>
+      <OpenSeadragonViewer styleClasses="w-full h-300" currentMapSrc={loadedMapSrc} currentMaskSrc={loadedMaskSrc} dmView={true}/>
 		</div>
 </div>
 
