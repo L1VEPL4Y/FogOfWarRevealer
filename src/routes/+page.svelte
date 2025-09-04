@@ -17,6 +17,9 @@
   let value = $state('files');
   let loadedMapSrc = $state("");
   let loadedMaskSrc = $state("");
+  let revealMode = $state(false);
+  let revealRadius = $state(50);
+  let radiusSelectActive = $state(false);
   // Logic
   //Handlers for the click event of the buttons to open a Map & Mask
   function openMapFilePicker(){
@@ -24,6 +27,12 @@
   }
   function openMaskFilePicker(){
     document.getElementById("maskFileInput")?.click();
+  }
+  function toggleRevealMode(){
+    revealMode = !revealMode;
+  }
+  function toggleRadiusSelect(){
+    radiusSelectActive = !radiusSelectActive;
   }
   //Load file for a Map or Mask. Display it in the openSeadragon Viewer when loaded
   function loadFile(isMap:boolean, event:Event){
@@ -36,38 +45,13 @@
           if(loadEvent.target.result == null) return;
           if(isMap) {
             loadedMapSrc = loadEvent.target.result as string;
-            var memoryImg = new Image();
-            memoryImg.onload = () => {
-              var width = memoryImg.width;
-              var height = memoryImg.height;
-              loadedMaskSrc = createBlackPng(width, height);
-            }
-            memoryImg.src = loadedMapSrc;
           } else {
             loadedMaskSrc = loadEvent.target.result as string;
-            console.log("loaded new mask:");
-            console.log(loadedMaskSrc);
+            console.log("loaded mask:", loadedMaskSrc);
           }
         }
       }
     }
-  }
-  //Create Full Black Mask (nothing revealed for players)
-  function createBlackPng(width:number, height:number) {
-    // Create an in-memory canvas
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-
-    const ctx = canvas.getContext("2d");
-
-    // Fill the entire canvas black
-    if(ctx){
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, width, height);
-    }
-    // Export as a PNG data URL
-    return canvas.toDataURL("image/png");
   }
 </script>
 
@@ -78,11 +62,25 @@
 
 <AppBar padding="pl-30 pt-4 pb-4">
   {#snippet lead()}
+    <!-- Select new Map -->
     <ImageUp size={32} onclick={openMapFilePicker} class="hover:preset-filled-surface-50-950 p-1"/>
+    <!-- Load Mask -->
     <Blend size={32} onclick={openMaskFilePicker} class="hover:preset-filled-surface-50-950 p-1"/>
+    <!-- Save Mask -->
     <Save size={32} class="hover:preset-filled-surface-50-950 p-1"/>
-    <Pen size={32} class="hover:preset-filled-surface-50-950 p-1"/>
-    <Radius size={32} class="hover:preset-filled-surface-50-950 p-1"/>
+    <!-- Toggle Reveal Mode (Brush) -->
+    <Pen size={32} onclick={toggleRevealMode} class="hover:preset-filled-surface-50-950 p-1" style="border: {revealMode? '2px solid black' : ''}"/>
+    <!-- Configure Brush Size -->
+    <Radius size={32} onclick={toggleRadiusSelect} class="hover:preset-filled-surface-50-950 p-1" style="border: {radiusSelectActive? '2px solid black' : ''}"/>
+  {/snippet}
+  {#snippet children()}
+    <form class="mx-auto w-full max-w-md space-y-4" style="{radiusSelectActive? '':'display:none'};">
+      <!-- Range -->
+      <label class="label">
+        <span class="label-text">Reveal Radius: {revealRadius}</span>
+        <input class="input" type="range" bind:value={revealRadius} max="200" min="1" />
+      </label>
+    </form>
   {/snippet}
 </AppBar>	
 <div class="card border-surface-100-900 grid h-full w-full grid-cols-[auto_1fr] border-[1px] ">
@@ -97,7 +95,7 @@
     <input type="file" id="mapFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(true, event)}>
     <input type="file" id="maskFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(false, event)}>
 		<div class="flex items-start justify-center">
-      <OpenSeadragonViewer styleClasses="w-full h-300" currentMapSrc={loadedMapSrc} currentMaskSrc={loadedMaskSrc} dmView={true}/>
+      <OpenSeadragonViewer styleClasses="w-full h-300" currentMapSrc={loadedMapSrc} currentMaskSrc={loadedMaskSrc} dmView={true} revealMode={revealMode} revealRadius={revealRadius}/>
 		</div>
 </div>
 
