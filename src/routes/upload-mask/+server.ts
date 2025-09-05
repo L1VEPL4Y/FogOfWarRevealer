@@ -5,6 +5,7 @@ type SSEClient = {
   close: () => void;
 };
 let clients: SSEClient[] = [];
+let latestMask: string | null = null;
 
 export const GET: RequestHandler = async ({ request }) => {
   const stream = new ReadableStream({
@@ -23,6 +24,11 @@ export const GET: RequestHandler = async ({ request }) => {
       } as any;
 
       clients.push(client);
+
+      if(latestMask){
+        client.send(latestMask);
+      }
+
       request.signal.addEventListener('abort', () => {
         client.close();
       });
@@ -45,7 +51,7 @@ export const POST: RequestHandler = async ({ request }) => {
   if (typeof mask !== 'string' || !mask.startsWith('data:image/png')) {
     return new Response('Invalid Mask', { status: 400 });
   }
-
+  latestMask = mask;
   for (const client of clients){
         try {
             client.send(mask);

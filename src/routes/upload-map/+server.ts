@@ -5,6 +5,7 @@ type SSEClient = {
   close: () => void;
 };
 let clients: SSEClient[] = [];
+let latestMap: string | null = null;
 
 export const GET: RequestHandler = async ({ request }) => {
   const stream = new ReadableStream({
@@ -23,6 +24,11 @@ export const GET: RequestHandler = async ({ request }) => {
       } as any;
 
       clients.push(client);
+      
+      if(latestMap){
+        client.send(latestMap);
+      }
+
       request.signal.addEventListener('abort', () => {
         client.close();
       });
@@ -45,7 +51,7 @@ export const POST: RequestHandler = async ({ request }) => {
         console.log("map wrong:",map);
         return new Response('Invalid Map Image', { status: 400 });
     }
-    
+    latestMap = map;
     for (const client of clients){
         try {
             client.send(map);
