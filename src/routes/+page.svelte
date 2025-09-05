@@ -6,7 +6,6 @@
   import Pen from '@lucide/svelte/icons/pen';
   import Radius from '@lucide/svelte/icons/radius';
   import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import { Navigation } from '@skeletonlabs/skeleton-svelte';
   import IconBolt from '@lucide/svelte/icons/bolt';
   import IconImage from '@lucide/svelte/icons/image';
@@ -54,11 +53,6 @@
     }
   }
 </script>
-
-
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
 
 <AppBar padding="pl-30 pt-4 pb-4">
   {#snippet lead()}
