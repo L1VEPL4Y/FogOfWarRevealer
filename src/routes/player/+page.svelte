@@ -12,13 +12,12 @@
 	const mapEvtSource = new EventSource("/upload-map");
 	mapEvtSource.onmessage = (event) => {
 		mapFromServer = event.data;
-		console.log("got new map from server:",event.data);
+		maskFromServer = "";
 	}
 
 	const maskEvtSource = new EventSource("/upload-mask");
 	maskEvtSource.onmessage = (event) => {
 		maskFromServer = event.data;
-		console.log("got new mask from server:",event.data);
 	}
 </script>
 <!-- 

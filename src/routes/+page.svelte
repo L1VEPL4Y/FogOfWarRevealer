@@ -44,6 +44,8 @@
           if(loadEvent.target.result == null) return;
           if(isMap) {
             loadedMapSrc = loadEvent.target.result as string;
+            //Initialize Empty Mask for new Map
+            loadedMaskSrc = "";
           } else {
             loadedMaskSrc = loadEvent.target.result as string;
             console.log("loaded mask:", loadedMaskSrc);

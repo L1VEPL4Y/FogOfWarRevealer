@@ -79,10 +79,10 @@
           if(ctx){
             ctx.clearRect(0,0,maskCanvas.width, maskCanvas.height);
             ctx.drawImage(img, 0, 0);
+            sendMaskToServer(maskCanvas);
           }
         }
         img.src = currentMaskSrc;
-        sendMaskToServer(maskCanvas);
       }
     });
     //Opens the image loaded at currentMapSrc in the OpenSeadragon Viewer
