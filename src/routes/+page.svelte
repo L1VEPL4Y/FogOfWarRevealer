@@ -19,6 +19,7 @@
   let revealMode = $state(false);
   let revealRadius = $state(50);
   let radiusSelectActive = $state(false);
+  let maskReloadCounter = $state(0);
   // Logic
   //Handlers for the click event of the buttons to open a Map & Mask
   function openMapFilePicker(){
@@ -47,7 +48,8 @@
             //Initialize Empty Mask for new Map
             loadedMaskSrc = "";
           } else {
-            loadedMaskSrc = loadEvent.target.result as string;
+            maskReloadCounter++;
+            loadedMaskSrc = (loadEvent.target.result as string)+"?v="+maskReloadCounter;
             console.log("loaded mask:", loadedMaskSrc);
           }
         }

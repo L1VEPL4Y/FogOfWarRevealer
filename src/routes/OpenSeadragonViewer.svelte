@@ -101,7 +101,12 @@
             sendMaskToServer(maskCanvas);
           }
         }
-        img.src = currentMaskSrc;
+        if(currentMaskSrc.indexOf("?v=") ==-1){
+          img.src = currentMaskSrc;
+        } else {
+          img.src = currentMaskSrc.substring(0,currentMaskSrc.indexOf("?v="));
+        }
+        
       }
     });
     //Opens the image loaded at currentMapSrc in the OpenSeadragon Viewer
