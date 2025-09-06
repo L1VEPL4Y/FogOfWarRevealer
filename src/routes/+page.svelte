@@ -13,13 +13,16 @@
 	import { onMount } from 'svelte';
   import OpenSeadragonViewer from './OpenSeadragonViewer.svelte';
   // State
+  let osdViewer: OpenSeadragonViewer;
   let value = $state('files');
   let loadedMapSrc = $state("");
+  let loadedMapName = $state("");
   let loadedMaskSrc = $state("");
   let revealMode = $state(false);
   let revealRadius = $state(50);
   let radiusSelectActive = $state(false);
   let maskReloadCounter = $state(0);
+
   // Logic
   //Handlers for the click event of the buttons to open a Map & Mask
   function openMapFilePicker(){
@@ -39,6 +42,7 @@
     if(event.target instanceof HTMLInputElement){
       if(event.target.files && event.target.files[0]){
         let reader = new FileReader();
+        loadedMapName = event.target.files[0].name;
         reader.readAsDataURL(event.target.files[0]);
         reader.onload = (loadEvent) => {
           if(loadEvent.target == null) return;
@@ -56,6 +60,17 @@
       }
     }
   }
+  //Save current Mask to disk
+  function saveMask(){
+    console.log("saving mask");
+    const maskDataUrl = osdViewer.exportMask();
+    if(!maskDataUrl || maskDataUrl == "") return;
+    //download:
+    const a = document.createElement("a");
+    a.href = maskDataUrl;
+    a.download = loadedMapName+"_mask.png";
+    a.click();
+  }
 </script>
 
 <AppBar padding="pl-30 pt-4 pb-4">
@@ -65,7 +80,7 @@
     <!-- Load Mask -->
     <Blend size={32} onclick={openMaskFilePicker} class="hover:preset-filled-surface-50-950 p-1"/>
     <!-- Save Mask -->
-    <Save size={32} class="hover:preset-filled-surface-50-950 p-1"/>
+    <Save size={32} onclick={saveMask} class="hover:preset-filled-surface-50-950 p-1"/>
     <!-- Toggle Reveal Mode (Brush) -->
     <Pen size={32} onclick={toggleRevealMode} class="hover:preset-filled-surface-50-950 p-1" style="border: {revealMode? '2px solid black' : ''}"/>
     <!-- Configure Brush Size -->
@@ -93,7 +108,7 @@
     <input type="file" id="mapFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(true, event)}>
     <input type="file" id="maskFileInput" accept="image/*" style="display: none;" onchange={(event) => loadFile(false, event)}>
 		<div class="flex items-start justify-center">
-      <OpenSeadragonViewer styleClasses="w-full h-300" currentMapSrc={loadedMapSrc} currentMaskSrc={loadedMaskSrc} dmView={true} revealMode={revealMode} revealRadius={revealRadius}/>
+      <OpenSeadragonViewer bind:this={osdViewer} styleClasses="w-full h-300" currentMapSrc={loadedMapSrc} currentMaskSrc={loadedMaskSrc} dmView={true} revealMode={revealMode} revealRadius={revealRadius}/>
 		</div>
 </div>
 

@@ -180,6 +180,11 @@
         });
       }
     }
+    //Function to export the mask to the page for downloading
+    export function exportMask(): string{
+      if(!maskCanvas) return "";
+      return maskCanvas.toDataURL("image/png");
+    }
     
 </script>
 <div id="openSeadragonViewer" class={styleClasses}>
