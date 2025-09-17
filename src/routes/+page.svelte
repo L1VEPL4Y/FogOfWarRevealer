@@ -91,7 +91,7 @@
       <!-- Range -->
       <label class="label">
         <span class="label-text">Reveal Radius: {revealRadius}</span>
-        <input class="input" type="range" bind:value={revealRadius} max="200" min="1" />
+        <input class="input" type="range" bind:value={revealRadius} max="500" min="1" />
       </label>
     </form>
   {/snippet}
